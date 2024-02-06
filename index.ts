@@ -157,4 +157,5 @@ async function run() {
   }
 }
 
-run();
+console.time('Done in');
+run().then(()=>{console.timeEnd('Done in');});
