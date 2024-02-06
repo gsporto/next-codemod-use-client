@@ -132,7 +132,7 @@ async function run() {
     ]);
 
     entries.forEach((entrie) => {
-      handleImportTree({ basePath: __dirname, file: entrie });
+      handleImportTree({ basePath: process.cwd(), file: entrie });
     });
 
     if (cli.dry) {
