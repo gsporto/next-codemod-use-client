@@ -31,10 +31,12 @@
     "acorn-jsx": "^5.3.2",
     "acorn-typescript": "^1.4.13",
     "globby": "^14.0.0",
+    "inquirer": "^9.2.14",
     "is-git-clean": "^1.1.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@types/inquirer": "^9.0.7",
     "@types/is-git-clean": "^1.1.2",
     "@types/node": "^20.11.16",
     "@types/yargs": "^17.0.32",

@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import readline from "node:readline/promises";
 
 import acorn, { ExpressionStatement } from "acorn";
 import { tsPlugin } from "acorn-typescript";
@@ -90,7 +89,7 @@ async function run() {
     .parseAsync();
 
   let execute = true;
-
+  const { default: inquirer } = await import("inquirer");
   if (!(cli.force || cli.dry)) {
     try {
       if (!isGitClean.sync(process.cwd())) {
@@ -102,21 +101,14 @@ async function run() {
       execute = true;
     } catch (err: any) {
       if (err && err.stderr && err.stderr.includes("not a git repository")) {
-        const RlInterface = readline.createInterface(
-          process.stdin,
-          process.stdout
-        );
+        const answer = await inquirer.prompt({
+          name: "continue",
+          type: "confirm",
+          message: "You want to continue?",
+          default: false,
+        });
 
-        const answer = await RlInterface.question(
-          "You want to continue? [y/N]:"
-        );
-
-        if (answer.toLowerCase() === "y" || answer.toLowerCase() === "yes") {
-          execute = true;
-        } else {
-          execute = false;
-        }
-        RlInterface.close();
+        execute = answer.continue;
       }
     }
   }
@@ -135,27 +127,38 @@ async function run() {
       handleImportTree({ basePath: process.cwd(), file: entrie });
     });
 
-    if (cli.dry) {
-      console.log('Files with unnecessary "use client":\n');
+    if (clientComponents.size > 0) {
+      console.log('Files with unnecessary "use client":');
       clientComponents.forEach((shouldRemove, key) => {
         if (shouldRemove) {
-          console.log(key);
+          console.log("-", key);
         }
       });
-      process.exit(1);
+    } else {
+      console.log('No unnecessary "use client" detected');
     }
 
-    clientComponents.forEach((shouldRemove, key) => {
-      if (shouldRemove) {
-        const source = fs.readFileSync(key, "utf-8");
-        fs.writeFileSync(
-          key,
-          source.replaceAll(/(['"])use client\1(;)?\s*\\?n?/gi, "")
-        );
+    if (!cli.dry) {
+      const answer = await inquirer.prompt({
+        name: "continue",
+        type: "confirm",
+        message: "You want to continue?",
+        default: true,
+      });
+
+      if (answer.continue) {
+        clientComponents.forEach((shouldRemove, key) => {
+          if (shouldRemove) {
+            const source = fs.readFileSync(key, "utf-8");
+            fs.writeFileSync(
+              key,
+              source.replaceAll(/(['"])use client\1(;)?\s*\\?n?/gi, "")
+            );
+          }
+        });
       }
-    });
+    }
   }
 }
 
-console.time('Done in');
-run().then(()=>{console.timeEnd('Done in');});
+run();
