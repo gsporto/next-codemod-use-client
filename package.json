@@ -20,7 +20,7 @@
     "component",
     "use client"
   ],
-  "author": "https://github.com/gsporto",
+  "author": "gsporto",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/gsporto/next-codemod-use-client/issues"
