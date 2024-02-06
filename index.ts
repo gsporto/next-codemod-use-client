@@ -1,13 +1,12 @@
-import fs from "fs";
-import path from "path";
-import readline from "readline/promises";
+import fs from "node:fs";
+import path from "node:path";
+import readline from "node:readline/promises";
 
 import acorn, { ExpressionStatement } from "acorn";
 import { tsPlugin } from "acorn-typescript";
 import jsx from "acorn-jsx";
 
 import yargs from "yargs";
-import { globby } from "globby";
 import isGitClean from "is-git-clean";
 
 type handleImportTreeProps = {
@@ -123,6 +122,7 @@ async function run() {
   }
 
   if (execute) {
+    const { globby } = await import("globby");
     const entries = await globby([
       "**/page.tsx",
       "**/layout.tsx",
