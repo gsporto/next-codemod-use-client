@@ -1,0 +1,43 @@
+{
+  "name": "next-codemod-use-client",
+  "version": "0.1.0",
+  "description": "Codemod for removing unnecessary 'use client' directives",
+  "main": "index.js",
+  "bin": "./bin/codemod.js",
+  "scripts": {
+    "build": "tsc -d -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gsporto/next-codemod-use-client.git"
+  },
+  "keywords": [
+    "react",
+    "next",
+    "next.js",
+    "rsc",
+    "server",
+    "component",
+    "use client"
+  ],
+  "author": "https://github.com/gsporto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gsporto/next-codemod-use-client/issues"
+  },
+  "homepage": "https://github.com/gsporto/next-codemod-use-client#readme",
+  "dependencies": {
+    "acorn": "^8.11.3",
+    "acorn-jsx": "^5.3.2",
+    "acorn-typescript": "^1.4.13",
+    "globby": "^14.0.0",
+    "is-git-clean": "^1.1.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/is-git-clean": "^1.1.2",
+    "@types/node": "^20.11.16",
+    "@types/yargs": "^17.0.32",
+    "typescript": "^5.3.3"
+  }
+}
