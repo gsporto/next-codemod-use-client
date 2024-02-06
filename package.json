@@ -1,6 +1,6 @@
 {
   "name": "next-codemod-use-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Codemod for removing unnecessary 'use client' directives",
   "bin": "./dist/bin/index.js",
   "scripts": {
