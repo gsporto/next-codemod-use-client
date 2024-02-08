@@ -2,11 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 
 import acorn, { ExpressionStatement } from "acorn";
-import { tsPlugin } from "acorn-typescript";
 import jsx from "acorn-jsx";
+import { tsPlugin } from "acorn-typescript";
 
-import yargs from "yargs";
 import isGitClean from "is-git-clean";
+import yargs from "yargs";
 
 type handleImportTreeProps = {
   basePath: string;
@@ -15,7 +15,12 @@ type handleImportTreeProps = {
 };
 
 const clientComponents = new Map();
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const acornParser = acorn.Parser.extend(tsPlugin() as any, jsx());
+
+type isGitCleanError = {
+  stderr: string;
+};
 
 function handleImportTree({
   basePath,
@@ -25,7 +30,7 @@ function handleImportTree({
   try {
     const filePath = path.resolve(
       basePath,
-      file.replace(".tsx", "").concat(".tsx")
+      file.replace(".tsx", "").concat(".tsx"),
     );
     const source = fs.readFileSync(filePath, "utf-8");
     const node = acornParser.parse(source, {
@@ -50,14 +55,14 @@ function handleImportTree({
       ) {
         clientComponents.set(
           filePath,
-          previousComponentType === "client" && hasClientDirective
+          previousComponentType === "client" && hasClientDirective,
         );
       }
     }
 
     const imports = node.body.filter((v) => v.type === "ImportDeclaration");
 
-    imports.forEach((value) => {
+    for (const value of imports) {
       if (
         value.type === "ImportDeclaration" &&
         typeof value.source.value === "string"
@@ -73,7 +78,7 @@ function handleImportTree({
           });
         }
       }
-    });
+    }
   } catch (error) {
     return;
   }
@@ -94,13 +99,14 @@ async function run() {
     try {
       if (!isGitClean.sync(process.cwd())) {
         console.error(
-          "git not clean, please stash or commit your git changes.\n"
+          "git not clean, please stash or commit your git changes.\n",
         );
         process.exit(1);
       }
       execute = true;
-    } catch (err: any) {
-      if (err && err.stderr && err.stderr.includes("not a git repository")) {
+    } catch (err) {
+      const e = err as isGitCleanError;
+      if (e?.stderr?.includes("not a git repository")) {
         const answer = await inquirer.prompt({
           name: "continue",
           type: "confirm",
@@ -123,9 +129,9 @@ async function run() {
       "**/error .tsx",
     ]);
 
-    entries.forEach((entrie) => {
+    for (const entrie of entries) {
       handleImportTree({ basePath: process.cwd(), file: entrie });
-    });
+    }
 
     if (clientComponents.size > 0) {
       console.log('Files with unnecessary "use client":');
@@ -152,7 +158,7 @@ async function run() {
             const source = fs.readFileSync(key, "utf-8");
             fs.writeFileSync(
               key,
-              source.replaceAll(/(['"])use client\1(;)?\s*\\?n?/gi, "")
+              source.replaceAll(/(['"])use client\1(;)?\s*\\?n?/gi, ""),
             );
           }
         });
