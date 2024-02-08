@@ -5,7 +5,8 @@
   "bin": "./dist/bin/index.js",
   "scripts": {
     "build:tsc": "tsc -d -p tsconfig.json",
-    "build": "tsx esbuild.config.ts"
+    "build": "tsx esbuild.config.ts",
+    "lint": "npx @biomejs/biome check --apply ."
   },
   "repository": {
     "type": "git",
